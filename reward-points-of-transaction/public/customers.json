@@ -99,7 +99,7 @@
     "customerId": "C004",
     "customerName": "Diana Prince",
     "transactionId": "T0013",
-    "purchaseDate": "2025-12-21",
+    "purchaseDate": "2025-06-21",
     "product": "Headphones",
     "price": 70.59
   },
@@ -139,7 +139,7 @@
     "customerId": "C001",
     "customerName": "Alice Johnson",
     "transactionId": "T0018",
-    "purchaseDate": "2025-11-12",
+    "purchaseDate": "2025-01-12",
     "product": "Wireless Mouse",
     "price": 154.45
   },
@@ -224,10 +224,10 @@
     "price": 221.43
   },
   {
-    "customerId": "C005",
-    "customerName": "Ethan Hunt",
+    "customerId": "C008",
+    "customerName": "Hannah Brown",
     "transactionId": "T0029",
-    "purchaseDate": "2025-06-30",
+    "purchaseDate": "2025-07-30",
     "product": "Smartwatch",
     "price": 106.65
   },
@@ -235,7 +235,7 @@
     "customerId": "C008",
     "customerName": "Hannah Brown",
     "transactionId": "T0030",
-    "purchaseDate": "2025-10-21",
+    "purchaseDate": "2025-07-21",
     "product": "Headphones",
     "price": 209.07
   },
@@ -275,7 +275,7 @@
     "customerId": "C008",
     "customerName": "Hannah Brown",
     "transactionId": "T0035",
-    "purchaseDate": "2025-11-23",
+    "purchaseDate": "2025-01-23",
     "product": "Monitor",
     "price": 124.86
   },
