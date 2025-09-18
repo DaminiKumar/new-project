@@ -47,3 +47,15 @@ src/
 │ ├─ table-data.js # Reward calculation logic
 │ └─ logger.js # Logger utility
 └─ App.js # Root app component
+
+## Testing
+
+Run all tests with:
+
+npm test
+
+Test Coverage
+
+To generate a code coverage report:
+
+npm test -- --coverage

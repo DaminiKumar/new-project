@@ -1,5 +1,4 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import EnhancedTable from "./EnhancedTable";
 
 describe("EnhancedTable Component", () => {
@@ -48,33 +47,15 @@ describe("EnhancedTable Component", () => {
     expect(Number(firstRowScoreDesc)).toBe(90); // David's score
   });
 
-  // it("changes page correctly using pagination", () => {
-  //   render(<EnhancedTable columns={columns} rows={rows} title="Test Table" />);
+  it("changes page correctly using pagination", () => {
+    render(<EnhancedTable columns={columns} rows={rows} title="Test Table" />);
 
-  //   const nextButton = screen.getByLabelText("Go to next page");
-  //   fireEvent.click(nextButton);
+    const nextButton = screen.getByLabelText("Go to next page");
+    fireEvent.click(nextButton);
 
-  //   // After clicking next page, only one row remains (6th row)
-  //   const rowsOnPage2 = screen.getAllByRole("row");
-  //   expect(rowsOnPage2).toHaveLength(2); // 1 row + 1 header row
-  //   expect(screen.getByText("Frank")).toBeInTheDocument();
-  // });
-
-  // it("changes rows per page correctly", async () => {
-  //   render(<EnhancedTable columns={columns} rows={rows} title="Test Table" />);
-
-  //   const user = userEvent.setup();
-
-  //   // open the select
-  //   const selectButton = screen.getByRole("button", { name: /rows per page/i });
-  //   await user.click(selectButton);
-
-  //   // select the option 10
-  //   const option10 = screen.getByRole("option", { name: "10" });
-  //   await user.click(option10);
-
-  //   // all rows should now be visible (6 rows + 1 header)
-  //   const allRows = screen.getAllByRole("row");
-  //   expect(allRows).toHaveLength(7);
-  // });
+    // After clicking next page, only one row remains (6th row)
+    const rowsOnPage2 = screen.getAllByRole("row");
+    expect(rowsOnPage2).toHaveLength(2); // 1 row + 1 header row
+    expect(screen.getByText("Frank")).toBeInTheDocument();
+  });
 });
