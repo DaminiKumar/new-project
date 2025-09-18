@@ -22,7 +22,7 @@ export default function TableContainer({ filteredCustomers }) {
     totalRewardsOfEachTransaction(filteredCustomers);
 
   return (
-    <>
+    <div data-testid="table-container">
       {/* Transactions */}
       <EnhancedTable
         title="Transactions"
@@ -43,6 +43,6 @@ export default function TableContainer({ filteredCustomers }) {
         columns={totalRewardsTableColumn}
         rows={totalRewardsByCustomerNameData}
       />
-    </>
+    </div>
   );
 }
