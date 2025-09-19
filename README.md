@@ -54,6 +54,10 @@ Run all tests with:
 
 npm test
 
+or to run tests in watch mode:
+
+npm test -- --watch
+
 Test Coverage
 
 To generate a code coverage report:
