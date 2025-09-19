@@ -22,7 +22,7 @@ A React application to calculate and display customer reward points based on the
 1. Clone the repository:
 
 git clone https://github.com/DaminiKumar/new-project.git
-cd reward-points-of-transaction
+cd new-project
 Install dependencies:
 
 npm install
@@ -33,7 +33,22 @@ npm start
 
 The app will run at http://localhost:3000.
 
-Project Structure
+# ScreenShots fo Application
+
+## Default 3 months filtered data
+
+![image-1](public/assets/image-1.png)
+
+## When service fails
+
+![image-2](public/assets/image-2.png)
+
+## Loading state
+
+![image-3](public/assets/image-3.png)
+
+## Project Structure
+
 public/
 └─ customers.json # Sample transaction data
 
@@ -44,6 +59,7 @@ src/
 │ └─ EnhancedTable.js # Reusable table component
 ├─ utils/
 │ ├─ const.js # App constants & table columns
+| ├─ date-constans.js # Date constants values
 │ ├─ table-data.js # Reward calculation logic
 │ └─ logger.js # Logger utility
 └─ App.js # Root app component
@@ -60,6 +76,9 @@ npm test -- --watch
 
 Test Coverage
 
-To generate a code coverage report:
+npm run test:coverage
 
-npm test -- --coverage
+## Coverage Report
+
+![image-4](public/assets/image-4.png)
+![image-5](public/assets/image-5.png)

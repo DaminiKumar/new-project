@@ -1,9 +1,14 @@
+import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import FilteredCustomers from "./FilteredCustomers";
 import log from "../utils/logger";
-import TableContainer from "./TableContainer";
 
-// ---------------- Mock DatePicker and Adapter ----------------
+jest.mock("./TableContainer", () => ({ filteredCustomers }) => (
+  <div data-testid="table-container">
+    TableContainer with {filteredCustomers.length} rows
+  </div>
+));
+
 jest.mock("@mui/x-date-pickers", () => ({
   LocalizationProvider: ({ children }) => <div>{children}</div>,
   DatePicker: ({ label, value, onChange }) => (
@@ -14,23 +19,21 @@ jest.mock("@mui/x-date-pickers", () => ({
     />
   ),
 }));
+
 jest.mock("@mui/x-date-pickers/AdapterDateFns", () => ({}));
 
-// ---------------- Mock Logger ----------------
 jest.mock("../utils/logger", () => ({
   info: jest.fn(),
   error: jest.fn(),
   debug: jest.fn(),
 }));
 
-// ---------------- Mock TableContainer ----------------
-jest.mock("./TableContainer", () => ({ filteredCustomers }) => (
-  <div data-testid="table-container">
-    TableContainer with {filteredCustomers.length} rows
-  </div>
-));
+// Mock date constants to match test data
+jest.mock("../utils/date-constants", () => ({
+  today: new Date("2025-03-31T00:00:00Z"),
+  threeMonthsAgo: new Date("2024-12-31T00:00:00Z"),
+}));
 
-// ---------------- Mock fetch data ----------------
 const mockData = [
   {
     customerId: "C001",
@@ -50,18 +53,6 @@ const mockData = [
   },
 ];
 
-// ---------------- Mock today ----------------
-const mockToday = new Date("2025-03-31T00:00:00Z");
-beforeAll(() => {
-  jest.useFakeTimers("modern");
-  jest.setSystemTime(mockToday);
-});
-
-afterAll(() => {
-  jest.useRealTimers();
-});
-
-// ---------------- Tests ----------------
 beforeEach(() => {
   jest.resetAllMocks();
   global.fetch = jest.fn(() =>
@@ -95,7 +86,16 @@ describe("FilteredCustomers Component", () => {
     expect(log.error).toHaveBeenCalled();
   });
 
-  it("filters data correctly on button click", async () => {
+  it("shows warning when no customers after fetching empty array", async () => {
+    global.fetch = jest.fn(() =>
+      Promise.resolve({ json: () => Promise.resolve([]) })
+    );
+    render(<FilteredCustomers />);
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("No customer data is found");
+  });
+
+  it("filters data correctly on Filter button click", async () => {
     render(<FilteredCustomers />);
     await screen.findByTestId("table-container");
 
@@ -106,12 +106,28 @@ describe("FilteredCustomers Component", () => {
     expect(table).toHaveTextContent("TableContainer with 2 rows");
   });
 
-  it("shows warning when no customers after filtering", async () => {
-    global.fetch = jest.fn(() =>
-      Promise.resolve({ json: () => Promise.resolve([]) })
-    );
+  it("resets data correctly on Reset button click", async () => {
     render(<FilteredCustomers />);
-    const alert = await screen.findByRole("alert");
-    expect(alert).toHaveTextContent("No customer data is found");
+    await screen.findByTestId("table-container");
+
+    const button = screen.getByRole("button", { name: /Reset To Default/i });
+    fireEvent.click(button);
+
+    const table = await screen.findByTestId("table-container");
+    expect(table).toHaveTextContent("TableContainer with 2 rows");
+  });
+
+  it("changes fromDate and toDate correctly via DatePickers", async () => {
+    render(<FilteredCustomers />);
+    await screen.findByTestId("table-container");
+
+    const fromInput = screen.getByLabelText("From Date");
+    const toInput = screen.getByLabelText("To Date");
+
+    fireEvent.change(fromInput, { target: { value: "2025-01-01" } });
+    fireEvent.change(toInput, { target: { value: "2025-03-01" } });
+
+    const table = await screen.findByTestId("table-container");
+    expect(table).toHaveTextContent("TableContainer with 2 rows");
   });
 });

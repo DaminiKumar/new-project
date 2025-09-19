@@ -126,10 +126,36 @@ export function filterCustomersByPurchaseDate(customers, from, to) {
   });
 }
 
+/**
+ * Formats a date string into a "Mon YYYY" format (e.g., "Sep 2025").
+ *
+ * @param {string|Date} dateString - The date string or Date object to format.
+ * @returns {string} Formatted date string in "Mon YYYY" format. Returns "Invalid Date" if input is invalid.
+ */
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   return date.toLocaleDateString("en-US", {
     month: "short",
     year: "numeric",
   });
+};
+
+/**
+ * Formats the value for a table cell.
+ * - If the column is "price", prefixes with `$` and defaults to 0 if empty, null, or undefined.
+ * - For other columns, returns the value or `"-"` if empty, null, or undefined.
+ *
+ * @param {Object} row - The data row object.
+ * @param {Object} column - The column configuration object with at least an `id` property.
+ * @returns {string|number} Formatted cell value for display in the table.
+ */
+export const formatTableCellValue = (row, column) => {
+  const value = row?.[column?.id]; // Safely access the value
+  if (column?.id === "price") {
+    // If price is null/undefined/empty, show $0
+    const priceValue = value != null && value !== "" ? value : 0;
+    return `$${priceValue}`;
+  } else {
+    return value != null && value !== "" ? value : "-";
+  }
 };

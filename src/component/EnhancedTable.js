@@ -11,6 +11,7 @@ import {
   TablePagination,
   Box,
 } from "@mui/material";
+import { formatTableCellValue } from "../utils/table-data";
 
 function EnhancedTable({ columns, rows, title }) {
   const [orderBy, setOrderBy] = useState(columns[0]?.id || "");
@@ -34,14 +35,6 @@ function EnhancedTable({ columns, rows, title }) {
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
-
-  const prefixDollarInPriceColumn = (row, column) => {
-    if (column.id === "price") {
-      return `$${row[column.id]}`;
-    } else {
-      return row[column.id];
-    }
-  };
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
@@ -77,7 +70,7 @@ function EnhancedTable({ columns, rows, title }) {
               <TableRow key={i}>
                 {columns.map((col) => (
                   <TableCell key={col.id}>
-                    {prefixDollarInPriceColumn(row, col)}
+                    {formatTableCellValue(row, col)}
                   </TableCell>
                 ))}
               </TableRow>

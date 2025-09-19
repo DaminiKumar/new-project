@@ -44,9 +44,14 @@ describe("TableContainer Component", () => {
         {
           customerId: "C001",
           customerName: "Alice",
-          month: 1,
-          year: 2025,
+          monthYear: "Jan 2025",
           rewards: 90,
+        },
+        {
+          customerId: "C002",
+          customerName: "Bob",
+          monthYear: "Feb 2025",
+          rewards: 20,
         },
       ]);
     jest.spyOn(tableData, "totalRewardsByCustomerName").mockReturnValue([

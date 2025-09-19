@@ -19,7 +19,7 @@ import {
 } from "../utils/const";
 import TableContainer from "./TableContainer";
 import log from "../utils/logger";
-import { threeMonthsAgo, today } from "../utils/dateConstants";
+import { threeMonthsAgo, today } from "../utils/date-constants";
 import { filterCustomersByPurchaseDate } from "../utils/table-data";
 
 export default function FilteredCustomers() {
@@ -129,7 +129,7 @@ export default function FilteredCustomers() {
         </LocalizationProvider>
 
         <Box mt={2}>
-          {filteredCustomers.length > 0 ? (
+          {filteredCustomers && filteredCustomers.length > 0 ? (
             <TableContainer filteredCustomers={filteredCustomers} />
           ) : (
             <Alert severity="warning">{noDataFound}</Alert>

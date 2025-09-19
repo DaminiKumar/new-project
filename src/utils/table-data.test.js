@@ -3,100 +3,128 @@ import {
   totalRewardsByMonthAndYearOfPurchase,
   totalRewardsByCustomerName,
   totalRewardsOfEachTransaction,
+  filterCustomersByPurchaseDate,
+  formatTableCellValue,
 } from "./table-data";
 
-describe("Reward Calculation Functions", () => {
-  // Sample test data
-  const sampleData = [
+describe("calculateRewards", () => {
+  it("returns 0 for null, undefined, or empty string", () => {
+    expect(calculateRewards(null)).toBe(0);
+    expect(calculateRewards(undefined)).toBe(0);
+    expect(calculateRewards("")).toBe(0);
+  });
+
+  it("returns correct points for amount between 50 and 100", () => {
+    expect(calculateRewards(60)).toBe(10);
+    expect(calculateRewards("75")).toBe(25);
+  });
+
+  it("returns correct points for amount over 100", () => {
+    expect(calculateRewards(120)).toBe(90); // (120-100)*2 + 50 = 90
+    expect(calculateRewards("150")).toBe(150); // (150-100)*2 + 50 = 150
+  });
+
+  it("returns 0 for non-numeric or negative values", () => {
+    expect(calculateRewards("abc")).toBe(0);
+    expect(calculateRewards(-50)).toBe(0);
+  });
+});
+
+describe("totalRewardsByMonthAndYearOfPurchase", () => {
+  const customers = [
     {
-      customerId: "C001",
+      customerId: 1,
       customerName: "Alice",
-      transactionId: "T001",
-      purchaseDate: "2025-01-15",
-      product: "Product A",
+      transactionId: "T0001",
+      purchaseDate: "2025-09-01",
+      product: "Wireless Mouse",
       price: 120,
     },
     {
-      customerId: "C001",
+      customerId: 1,
+      transactionId: "T0001",
       customerName: "Alice",
-      transactionId: "T002",
-      purchaseDate: "2025-01-20",
-      product: "Product B",
-      price: 70,
-    },
-    {
-      customerId: "C002",
-      customerName: "Bob",
-      transactionId: "T003",
-      purchaseDate: "2025-02-10",
-      product: "Product C",
-      price: "90",
-    },
-    {
-      customerId: "C003",
-      customerName: "Charlie",
-      transactionId: "T004",
-      purchaseDate: "2025-02-15",
-      product: "Product D",
-      price: 40,
-    },
-    {
-      customerId: "C004",
-      customerName: "David",
-      transactionId: "T005",
-      purchaseDate: "2025-03-01",
-      product: "Product E",
-      price: "105.5",
+      purchaseDate: "2025-09-15",
+      product: "Mouse",
+      price: 80,
     },
   ];
 
-  describe("calculateRewards", () => {
-    it("should calculate rewards correctly for numbers", () => {
-      expect(calculateRewards(120)).toBe(90); // 2*(120-100)+50 = 90
-      expect(calculateRewards(70)).toBe(20); // 70-50 = 20
-      expect(calculateRewards(50)).toBe(0); // <=50 no points
-    });
+  it("calculates rewards grouped by customer and month-year", () => {
+    const result = totalRewardsByMonthAndYearOfPurchase(customers);
+    expect(result).toHaveLength(1);
+    expect(result[0]).toHaveProperty("customerId", 1);
+    expect(result[0]).toHaveProperty("customerName", "Alice");
+    expect(result[0]).toHaveProperty("rewards", 120); // rewards from both txns
+    expect(result[0]).toHaveProperty("monthYear", "Sep 2025");
+  });
+});
 
-    it("should convert string to number and ignore decimals", () => {
-      expect(calculateRewards("105.5")).toBe(60); // 2*(105-100)+50=60
-      expect(calculateRewards("90")).toBe(40); // 90-50 = 40
-    });
+describe("totalRewardsByCustomerName", () => {
+  const customers = [
+    { customerName: "Bob", price: 60 },
+    { customerName: "Bob", price: 120 },
+  ];
 
-    it("should return 0 for empty, null, undefined, or invalid input", () => {
-      expect(calculateRewards("")).toBe(0);
-      expect(calculateRewards(null)).toBe(0);
-      expect(calculateRewards(undefined)).toBe(0);
-      expect(calculateRewards("abc")).toBe(0);
+  it("calculates rewards grouped by customer name", () => {
+    const result = totalRewardsByCustomerName(customers);
+    expect(result).toHaveLength(1);
+    expect(result[0]).toEqual({ customerName: "Bob", rewards: 100 });
+  });
+});
+
+describe("totalRewardsOfEachTransaction", () => {
+  const customers = [
+    {
+      transactionId: "t1",
+      customerName: "Alice",
+      purchaseDate: "2025-09-01",
+      product: "Book",
+      price: 120,
+    },
+  ];
+
+  it("returns rewards for each transaction", () => {
+    const result = totalRewardsOfEachTransaction(customers);
+    expect(result[0]).toEqual({
+      transactionId: "t1",
+      customerName: "Alice",
+      purchaseDate: expect.any(String),
+      product: "Book",
+      price: 120,
+      rewardPoints: 90,
     });
   });
+});
 
-  describe("totalRewardsByMonthAndYearOfPurchase", () => {
-    it("should calculate rewards grouped by customer, month, year", () => {
-      const result = totalRewardsByMonthAndYearOfPurchase(sampleData);
-      expect(result.length).toBeGreaterThan(0);
-      // Alice Jan 2025: T001=90 + T002=20 => 110
-      const aliceJan = result.find(
-        (r) => r.customerId === "C001" && r.month === 1 && r.year === 2025
-      );
-      expect(aliceJan.rewards).toBe(110);
-    });
+describe("filterCustomersByPurchaseDate", () => {
+  const customers = [
+    { purchaseDate: "2025-09-01" },
+    { purchaseDate: "2025-06-01" },
+    { purchaseDate: null },
+  ];
+
+  it("filters customers within date range", () => {
+    const from = new Date("2025-08-01");
+    const to = new Date("2025-09-30");
+    const result = filterCustomersByPurchaseDate(customers, from, to);
+    expect(result).toHaveLength(1);
+    expect(result[0].purchaseDate).toBe("2025-09-01");
+  });
+});
+
+describe("formatTableCellValue", () => {
+  it("formats price column correctly", () => {
+    expect(formatTableCellValue({ price: 50 }, { id: "price" })).toBe("$50");
+    expect(formatTableCellValue({ price: null }, { id: "price" })).toBe("$0");
+    expect(formatTableCellValue({}, { id: "price" })).toBe("$0");
   });
 
-  describe("totalRewardsByCustomerName", () => {
-    it("should calculate total rewards per customer", () => {
-      const result = totalRewardsByCustomerName(sampleData);
-      expect(result.length).toBe(4); // Alice, Bob, Charlie, David
-      const bob = result.find((r) => r.customerName === "Bob");
-      expect(bob.rewards).toBe(40); // 90-50 = 40
-    });
-  });
-
-  describe("totalRewardsOfEachTransaction", () => {
-    it("should calculate rewards for each transaction", () => {
-      const result = totalRewardsOfEachTransaction(sampleData);
-      expect(result.length).toBe(sampleData.length);
-      const t004 = result.find((r) => r.transactionId === "T004");
-      expect(t004.rewardPoints).toBe(0); // Charlie 40$ => 0 points
-    });
+  it("formats other columns correctly", () => {
+    expect(formatTableCellValue({ name: "Alice" }, { id: "name" })).toBe(
+      "Alice"
+    );
+    expect(formatTableCellValue({ name: null }, { id: "name" })).toBe("-");
+    expect(formatTableCellValue({}, { id: "name" })).toBe("-");
   });
 });
