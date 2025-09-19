@@ -119,7 +119,7 @@ export default function FilteredCustomers() {
               {filter}
             </Button>
             <Button
-              variant="contained"
+              variant="outlined"
               size="large"
               onClick={() => handleReset()}
             >

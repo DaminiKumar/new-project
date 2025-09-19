@@ -110,7 +110,7 @@ describe("FilteredCustomers Component", () => {
     render(<FilteredCustomers />);
     await screen.findByTestId("table-container");
 
-    const button = screen.getByRole("button", { name: /Reset To Default/i });
+    const button = screen.getByRole("button", { name: /Reset/i });
     fireEvent.click(button);
 
     const table = await screen.findByTestId("table-container");

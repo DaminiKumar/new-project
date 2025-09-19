@@ -9,7 +9,7 @@ export const errorFetchingData =
 
 export const filter = "Filter";
 
-export const reset = "Reset To Default";
+export const reset = "Reset";
 
 export const filterCustomerByPurchaseDate = "Filter Customers by Purchase Date";
 
