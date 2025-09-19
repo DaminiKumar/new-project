@@ -13,27 +13,20 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import {
   errorFetchingData,
   filter,
+  reset,
   filterCustomerByPurchaseDate,
   noDataFound,
 } from "../utils/const";
 import TableContainer from "./TableContainer";
 import log from "../utils/logger";
+import { threeMonthsAgo, today } from "../utils/dateConstants";
+import { filterCustomersByPurchaseDate } from "../utils/table-data";
 
 export default function FilteredCustomers() {
   const [customers, setCustomers] = useState([]);
   const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-
-  // Today, 3 months ago, 3 years ago
-  const today = new Date();
-  const threeMonthsAgo = new Date();
-  threeMonthsAgo.setMonth(today.getMonth() - 3);
-
-  const threeYearsAgo = new Date();
-  threeYearsAgo.setFullYear(today.getFullYear() - 3);
-
-  // Date state with defaults
   const [fromDate, setFromDate] = useState(threeMonthsAgo);
   const [toDate, setToDate] = useState(today);
 
@@ -44,24 +37,28 @@ export default function FilteredCustomers() {
       .then((data) => {
         log.info("Fetched customer data:", data);
         setCustomers(data);
-        setLoading(false);
-        handleFilter(data, threeMonthsAgo, today);
+        setFilteredCustomers(
+          filterCustomersByPurchaseDate(data, threeMonthsAgo, today)
+        );
       })
       .catch((err) => {
         log.error("Error fetching data:", err);
         setError(true);
-        setLoading(false);
-      });
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   // Filtering function
-  const handleFilter = (data = customers, from = fromDate, to = toDate) => {
-    const filtered = data.filter((cust) => {
-      if (!cust.purchaseDate) return false;
-      const txnDate = new Date(cust.purchaseDate);
-      return txnDate >= from && txnDate <= to;
-    });
-    setFilteredCustomers(filtered);
+  const handleFilter = (from = fromDate, to = toDate) => {
+    setFilteredCustomers(filterCustomersByPurchaseDate(customers, from, to));
+  };
+
+  const handleReset = () => {
+    setFromDate(threeMonthsAgo);
+    setToDate(today);
+    setFilteredCustomers(
+      filterCustomersByPurchaseDate(customers, threeMonthsAgo, today)
+    );
   };
 
   if (loading) {
@@ -104,15 +101,15 @@ export default function FilteredCustomers() {
               label="From Date"
               value={fromDate}
               onChange={(newValue) => setFromDate(newValue)}
-              minDate={threeYearsAgo}
               maxDate={today}
+              format="dd/MM/yyyy"
             />
             <DatePicker
               label="To Date"
               value={toDate}
               onChange={(newValue) => setToDate(newValue)}
-              minDate={threeYearsAgo}
               maxDate={today}
+              format="dd/MM/yyyy"
             />
             <Button
               variant="contained"
@@ -120,6 +117,13 @@ export default function FilteredCustomers() {
               onClick={() => handleFilter()}
             >
               {filter}
+            </Button>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={() => handleReset()}
+            >
+              {reset}
             </Button>
           </Stack>
         </LocalizationProvider>

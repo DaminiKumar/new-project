@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import log from "loglevel";
 
 // Set log level (can be "trace", "debug", "info", "warn", "error", "silent")

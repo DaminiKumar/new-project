@@ -1,16 +1,21 @@
 module.exports = {
-  testEnvironment: "jsdom", // Required for React Testing Library
   collectCoverage: true,
   collectCoverageFrom: [
-    "src/**/*.{js,jsx}", // include all your source files
-    "!src/index.js", // exclude entry point
-    "!src/reportWebVitals.js", // exclude CRA boilerplate
-    "!src/setupTests.js", // exclude test setup file
-    "!src/utils/logger.js", // exclude logger from coverage
+    "src/**/*.{js,jsx}", // include all js/jsx in src
+    "!src/index.js", // exclude index.js
+    "!src/reportWebVitals.js", // exclude CRA report file
+    "!src/setupTests.js", // exclude setup
+    "!src/utils/logger.js", // exclude custom logger
   ],
-  coverageReporters: ["text", "lcov", "json", "clover"], // outputs
-  setupFilesAfterEnv: ["<rootDir>/src/setupTests.js"], // CRA uses setupTests
+  coveragePathIgnorePatterns: [
+    "/node_modules/",
+    "src/index.js",
+    "src/reportWebVitals.js",
+    "src/setupTests.js",
+    "src/utils/logger.js",
+  ],
   transform: {
-    "^.+\\.(js|jsx)$": "babel-jest", // ensure Babel transpiles JSX
+    "^.+\\.(js|jsx)$": "babel-jest", // make Jest understand JSX
   },
+  testEnvironment: "jsdom",
 };

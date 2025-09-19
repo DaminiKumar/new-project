@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 /**
  * Calculates reward points based on purchase amount.
  * - Ignores empty, null, undefined, or invalid values.
@@ -40,18 +42,14 @@ export const calculateRewards = (amount) => {
 export const totalRewardsByMonthAndYearOfPurchase = (customers) => {
   const totalRewardsByMonthAndYearOfPurchaseMap = {};
   customers.forEach((customer) => {
-    const date = new Date(customer.purchaseDate);
     const rewardPoints = calculateRewards(customer.price);
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    const key = `${customer.customerId}-${month}-${year}`;
+    const key = `${customer.customerId}-${customer.purchaseDate.slice(0, 7)}`;
 
     if (!totalRewardsByMonthAndYearOfPurchaseMap[key]) {
       totalRewardsByMonthAndYearOfPurchaseMap[key] = {
         customerId: customer.customerId,
         customerName: customer.customerName,
-        month: month,
-        year: year,
+        monthYear: formatDate(customer.purchaseDate),
         rewards: 0,
       };
     }
@@ -103,7 +101,7 @@ export const totalRewardsOfEachTransaction = (customers) => {
     totalRewardsOfEachTransaction.push({
       transactionId: transactionId,
       customerName: customerName,
-      purchaseDate: purchaseDate,
+      purchaseDate: format(new Date(purchaseDate), "dd/MM/yyyy"),
       product: product,
       price: price,
       rewardPoints: rewardPoints,
@@ -111,4 +109,27 @@ export const totalRewardsOfEachTransaction = (customers) => {
   });
 
   return totalRewardsOfEachTransaction;
+};
+
+/**
+ * Filter customers by purchase date range
+ * @param {Array} customers - Array of customer objects
+ * @param {Date} from - Start date
+ * @param {Date} to - End date
+ * @returns {Array} - Filtered customers
+ */
+export function filterCustomersByPurchaseDate(customers, from, to) {
+  return customers.filter((cust) => {
+    if (!cust.purchaseDate) return false;
+    const txnDate = new Date(cust.purchaseDate);
+    return txnDate >= from && txnDate <= to;
+  });
+}
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    year: "numeric",
+  });
 };

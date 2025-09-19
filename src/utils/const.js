@@ -8,13 +8,15 @@ export const errorFetchingData =
   "Something went wrong, please try after some time";
 
 export const filter = "Filter";
+
+export const reset = "Reset To Default";
+
 export const filterCustomerByPurchaseDate = "Filter Customers by Purchase Date";
 
 export const userMonthlyTableColumn = [
   { id: "customerId", label: "Customer ID" },
   { id: "customerName", label: "Customer Name" },
-  { id: "month", label: "Month" },
-  { id: "year", label: "Year" },
+  { id: "monthYear", label: "Month-Year" },
   { id: "rewards", label: "Rewards" },
 ];
 

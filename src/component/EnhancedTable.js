@@ -35,6 +35,14 @@ function EnhancedTable({ columns, rows, title }) {
     page * rowsPerPage + rowsPerPage
   );
 
+  const prefixDollarInPriceColumn = (row, column) => {
+    if (column.id === "price") {
+      return `$${row[column.id]}`;
+    } else {
+      return row[column.id];
+    }
+  };
+
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
       <Box
@@ -68,7 +76,9 @@ function EnhancedTable({ columns, rows, title }) {
             {paginatedRows.map((row, i) => (
               <TableRow key={i}>
                 {columns.map((col) => (
-                  <TableCell key={col.id}>{row[col.id]}</TableCell>
+                  <TableCell key={col.id}>
+                    {prefixDollarInPriceColumn(row, col)}
+                  </TableCell>
                 ))}
               </TableRow>
             ))}
