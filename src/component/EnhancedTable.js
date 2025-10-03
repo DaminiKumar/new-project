@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { parse } from "date-fns";
 import {
   Table,
   TableBody,
@@ -26,9 +27,18 @@ function EnhancedTable({ columns, rows, title }) {
   };
 
   const sortedRows = [...rows].sort((a, b) => {
-    if (a[orderBy] < b[orderBy]) return order === "asc" ? -1 : 1;
-    if (a[orderBy] > b[orderBy]) return order === "asc" ? 1 : -1;
-    return 0;
+    if (orderBy === "purchaseDate") {
+      // Parse DD/MM/YYYY format using date-fns
+      const dateA = parse(a[orderBy], "dd/MM/yyyy", new Date());
+      const dateB = parse(b[orderBy], "dd/MM/yyyy", new Date());
+      if (dateA < dateB) return order === "asc" ? -1 : 1;
+      if (dateA > dateB) return order === "asc" ? 1 : -1;
+      return 0;
+    } else {
+      if (a[orderBy] < b[orderBy]) return order === "asc" ? -1 : 1;
+      if (a[orderBy] > b[orderBy]) return order === "asc" ? 1 : -1;
+      return 0;
+    }
   });
 
   const paginatedRows = sortedRows.slice(
