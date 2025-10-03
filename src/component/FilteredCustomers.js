@@ -101,13 +101,14 @@ export default function FilteredCustomers() {
               label="From Date"
               value={fromDate}
               onChange={(newValue) => setFromDate(newValue)}
-              maxDate={today}
+              maxDate={toDate < today ? toDate : today}
               format="dd/MM/yyyy"
             />
             <DatePicker
               label="To Date"
               value={toDate}
               onChange={(newValue) => setToDate(newValue)}
+              minDate={fromDate}
               maxDate={today}
               format="dd/MM/yyyy"
             />

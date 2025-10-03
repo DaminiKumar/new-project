@@ -39,6 +39,10 @@ The app will run at http://localhost:3000.
 
 ![image-1](public/assets/image-1.png)
 
+## When no customer is found
+
+![image-6](public/assets/image-6.png)
+
 ## When service fails
 
 ![image-2](public/assets/image-2.png)
