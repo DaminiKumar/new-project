@@ -11,7 +11,7 @@ import {
 } from "../utils/table-data";
 import log from "../utils/logger";
 
-export default function TableContainer({ filteredCustomers }) {
+export default function TableContainer({ filteredCustomers, resetClicked }) {
   log.debug("Filtered Customers Data:", filteredCustomers);
   // Processed data after filtering
   const totalRewardsByMonthAndYearOfPurchaseData =
@@ -28,6 +28,7 @@ export default function TableContainer({ filteredCustomers }) {
         title="Transactions"
         columns={transactionsTableColumn}
         rows={totalRewardsOfEachTransactionData}
+        resetClicked={resetClicked}
       />
 
       {/* User Monthly Rewards */}
@@ -35,6 +36,7 @@ export default function TableContainer({ filteredCustomers }) {
         title="User Monthly Rewards"
         columns={userMonthlyTableColumn}
         rows={totalRewardsByMonthAndYearOfPurchaseData}
+        resetClicked={resetClicked}
       />
 
       {/* Total Rewards */}
@@ -42,6 +44,7 @@ export default function TableContainer({ filteredCustomers }) {
         title="Total Rewards"
         columns={totalRewardsTableColumn}
         rows={totalRewardsByCustomerNameData}
+        resetClicked={resetClicked}
       />
     </div>
   );

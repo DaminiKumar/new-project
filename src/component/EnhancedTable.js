@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { parse } from "date-fns";
 import {
   Table,
@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { formatTableCellValue } from "../utils/table-data";
 
-function EnhancedTable({ columns, rows, title }) {
+function EnhancedTable({ columns, rows, title, resetClicked }) {
   const [orderBy, setOrderBy] = useState(columns[0]?.id || "");
   const [order, setOrder] = useState("asc");
   const [page, setPage] = useState(0);
@@ -26,25 +26,37 @@ function EnhancedTable({ columns, rows, title }) {
     setOrderBy(colId);
   };
 
-  const sortedRows = [...rows].sort((a, b) => {
-    if (orderBy === "purchaseDate") {
-      // Parse DD/MM/YYYY format using date-fns
-      const dateA = parse(a[orderBy], "dd/MM/yyyy", new Date());
-      const dateB = parse(b[orderBy], "dd/MM/yyyy", new Date());
-      if (dateA < dateB) return order === "asc" ? -1 : 1;
-      if (dateA > dateB) return order === "asc" ? 1 : -1;
-      return 0;
-    } else {
-      if (a[orderBy] < b[orderBy]) return order === "asc" ? -1 : 1;
-      if (a[orderBy] > b[orderBy]) return order === "asc" ? 1 : -1;
-      return 0;
+  const getComparableValue = (value, type) => {
+    if (type === "date-ddmmyyyy") {
+      return parse(value, "dd/MM/yyyy", new Date());
     }
+    if (type === "date-mmmyyyy") {
+      return parse(value, "MMM yyyy", new Date());
+    }
+    return value;
+  };
+
+  const sortedRows = [...rows].sort((a, b) => {
+    let type = "";
+    if (orderBy === "purchaseDate") type = "date-ddmmyyyy";
+    else if (orderBy === "monthYear") type = "date-mmmyyyy";
+
+    const valA = getComparableValue(a[orderBy], type);
+    const valB = getComparableValue(b[orderBy], type);
+
+    if (valA < valB) return order === "asc" ? -1 : 1;
+    if (valA > valB) return order === "asc" ? 1 : -1;
+    return 0;
   });
 
   const paginatedRows = sortedRows.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
+
+  useEffect(() => {
+    setPage(0);
+  }, [resetClicked]);
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>

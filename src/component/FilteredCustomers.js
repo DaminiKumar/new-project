@@ -29,6 +29,7 @@ export default function FilteredCustomers() {
   const [error, setError] = useState(false);
   const [fromDate, setFromDate] = useState(threeMonthsAgo);
   const [toDate, setToDate] = useState(today);
+  const [resetClicked, setResetClicked] = useState(false);
 
   // Fetch data from public folder
   useEffect(() => {
@@ -59,6 +60,7 @@ export default function FilteredCustomers() {
     setFilteredCustomers(
       filterCustomersByPurchaseDate(customers, threeMonthsAgo, today)
     );
+    setResetClicked((prev) => !prev); // toggle to trigger reset
   };
 
   if (loading) {
@@ -131,7 +133,10 @@ export default function FilteredCustomers() {
 
         <Box mt={2}>
           {filteredCustomers && filteredCustomers.length > 0 ? (
-            <TableContainer filteredCustomers={filteredCustomers} />
+            <TableContainer
+              resetClicked={resetClicked}
+              filteredCustomers={filteredCustomers}
+            />
           ) : (
             <Alert severity="warning">{noDataFound}</Alert>
           )}

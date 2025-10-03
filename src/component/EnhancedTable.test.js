@@ -6,12 +6,18 @@ const columns = [
   { id: "name", label: "Name" },
   { id: "age", label: "Age" },
   { id: "purchaseDate", label: "Purchase Date" },
+  { id: "monthYear", label: "Month/Year" },
 ];
 
 const rows = [
-  { name: "Alice", age: 30, purchaseDate: "01/04/2023" },
-  { name: "Bob", age: 25, purchaseDate: "15/03/2023" },
-  { name: "Charlie", age: 35, purchaseDate: "10/05/2023" },
+  { name: "Alice", age: 30, purchaseDate: "01/04/2023", monthYear: "Apr 2023" },
+  { name: "Bob", age: 25, purchaseDate: "15/03/2023", monthYear: "Mar 2023" },
+  {
+    name: "Charlie",
+    age: 35,
+    purchaseDate: "10/05/2023",
+    monthYear: "May 2023",
+  },
 ];
 
 describe("EnhancedTable", () => {
